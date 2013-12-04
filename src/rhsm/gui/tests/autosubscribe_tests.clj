@@ -221,13 +221,13 @@
           (verify false)))))
 
 (defn ^{Test {:groups ["autosubscribe"
-                       "configureProductCertDirForAllProductsSubscribableByMoreThanOneCommonServiceLevel"
                        "blockedByBug-1009600"
                        "blockedByBug-1011703"]}}
   check_subscription_type_auto_attach
   "Asserts if type column is present in register dialog"
   [_]
   (try
+    (.configureProductCertDirForAllProductsSubscribableByMoreThanOneCommonServiceLevel @complytests)
     (tasks/restart-app)
     (tasks/register-with-creds)
     (tasks/ui click :auto-attach)
@@ -248,13 +248,13 @@
      (tasks/unregister))))
 
 (defn ^{Test {:groups ["autosubscribe"
-                       "configureProductCertDirForAllProductsSubscribableByMoreThanOneCommonServiceLevel"
                        "blockedByBug-812903"
                        "blockedByBug-1005329"]}}
   autosubscribe_select_product_sla
   "Asserts if autosubscribe works with selecting product sla"
   [_]
   (try
+    (.configureProductCertDirForAllProductsSubscribableByMoreThanOneCommonServiceLevel @complytests)
     (tasks/restart-app)
     (tasks/register-with-creds)
     (tasks/ui click :auto-attach)

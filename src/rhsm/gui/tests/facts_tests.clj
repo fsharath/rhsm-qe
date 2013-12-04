@@ -123,7 +123,7 @@
     (let [cli-raw (:stdout
                    (run-command "subscription-manager identity | grep 'org ID'"))
           cli-val (trim (last (split cli-raw #":")))
-          gui-val (tasks/ui gettextvalue :facts-org-id)]
+          gui-val (tasks/ui gettextvalue :facts-sys-id)]
       (verify (= gui-val cli-val)))
     (finally (tasks/ui click :close-facts))))
 
@@ -367,6 +367,7 @@
                                :or {debug false}}]
   (if-not (assert-skip :facts)
     (do
+      (tasks/restart-app)
       (let [prods (tasks/get-table-elements :installed-view 0)
             indexes (range 0 (tasks/ui getrowcount :installed-view))
             prodlist (map (fn [item index] [item index]) prods indexes)]

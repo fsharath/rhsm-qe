@@ -60,6 +60,7 @@
 
 (defn ^{Test {:groups ["subscription_status"
                        "tier1"
+                       "acceptance"
                        "blockedByBug-1012501"
                        "blockedByBug-1040119"]
               :priority (int 100)}}
@@ -80,10 +81,10 @@
 
 (defn ^{Test {:groups ["subscription_status"
                        "tier1"
+                       "acceptance"
                        "blockedByBug-1012501"
                        "blockedByBug-1040119"]
-              :dependsOnMethods ["check_status_message_before_attaching"]
-              :priority (int 101)}}
+              :dependsOnMethods ["check_status_message_before_attaching"]}}
   check_status_message_after_attaching
   "Asserts that status message displayed in main-window is right after attaching subscriptions"
   [_]
@@ -105,8 +106,7 @@
                        "tier1"
                        "blockedByBug-1012501"
                        "blockedByBug-1040119"]
-              :dependsOnMethods ["check_status_message_after_attaching"]
-              :priority (int 102)}}
+              :dependsOnMethods ["check_status_message_after_attaching"]}}
   check_status_message_future_subscriptions
   "Asserts that status message displayed in main-window is right after attaching future
    subscriptions"
@@ -145,8 +145,7 @@
                          "tier1"
                          "blockedByBug-1012501"
                          "blockedByBug-1040119"]
-                :dependsOnMethods ["check_status_message_future_subscriptions"]
-                :priority (int 103)}}
+                :dependsOnMethods ["check_status_message_future_subscriptions"]}}
     check_status_message_expired_subscriptions
     "Asserts that status message displayed in main-window is right after expiring
    attached subscriptions"

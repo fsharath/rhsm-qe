@@ -35,7 +35,7 @@
       (reset! (skip-groups :interop) true)
       (throw e))))
 
-(defn ^{AfterClass {:groups ["setup"]}}
+(defn ^{AfterClass {:groups ["cleanup"]}}
   cleanup [_]
   (if-not (tasks/ui exists? :main-window "*")
     (tasks/start-app))

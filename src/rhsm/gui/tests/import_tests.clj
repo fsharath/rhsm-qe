@@ -56,7 +56,7 @@
       (reset! (skip-groups :import) true)
       (throw e))))
 
-(defn ^{AfterClass {:groups ["setup"]
+(defn ^{AfterClass {:groups ["cleanup"]
                     :alwaysRun true}}
   cleanup_import [_]
   (assert-valid-testing-arch)
@@ -125,8 +125,7 @@
 
 (defn ^{Test {:groups ["import"
                        "tier1"]
-              :dependsOnMethods ["import_valid_cert"]
-              :priority (int 20)}}
+              :dependsOnMethods ["import_valid_cert"]}}
   import_unregister
   "Asserts that imported certs are sucessfully removed after unregister."
   [_]
@@ -155,8 +154,7 @@
                        "blockedByBug-691784"
                        "blockedByBug-723363"
                        "blockedByBug-1142400"]
-              :dependsOnMethods ["import_valid_cert"]
-              :priority (int 30)}}
+              :dependsOnMethods ["import_valid_cert"]}}
   import_unsubscribe
   "Tests that an imported cert can be unsubscribed from in the GUI."
   [_]

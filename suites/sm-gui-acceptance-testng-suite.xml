@@ -36,8 +36,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -51,8 +51,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -67,10 +67,10 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="ComplianceTests" />
         <exclude name="cli.tests" />
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -84,8 +84,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>  
@@ -99,8 +99,8 @@
     </classes>
     <groups>
       <run>
-	      <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -114,8 +114,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -129,8 +129,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -144,8 +144,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -159,8 +159,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -174,8 +174,8 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -189,8 +189,68 @@
     </classes>
     <groups>
       <run>
-        <include name="acceptance"/>
         <include name="setup" />
+        <include name="acceptance"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Subscription Status">
+    <classes>
+      <class name="rhsm.base.SubscriptionManagerBaseTestScript"/>
+      <class name="rhsm.gui.tests.subscription_status_tests" />
+      <class name="rhsm.gui.tests.base" />
+    </classes>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="acceptance"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Product Status">
+    <classes>
+      <class name="rhsm.base.SubscriptionManagerBaseTestScript"/>
+      <class name="rhsm.gui.tests.product_status_tests" />
+      <class name="rhsm.gui.tests.base" />
+    </classes>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="acceptance"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Search Status">
+    <classes>
+      <class name="rhsm.base.SubscriptionManagerBaseTestScript"/>
+      <class name="rhsm.gui.tests.search_status_tests" />
+      <class name="rhsm.gui.tests.base" />
+    </classes>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="acceptance"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Firstboot Proxy">
+    <classes>
+      <class name="rhsm.base.SubscriptionManagerBaseTestScript"/>
+      <class name="rhsm.gui.tests.firstboot_proxy_tests" />
+      <class name="rhsm.gui.tests.base" />
+    </classes>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="acceptance"/>
         <include name="cleanup" />
       </run>
     </groups>

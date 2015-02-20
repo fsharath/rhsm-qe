@@ -126,8 +126,7 @@
 (defn ^{Test {:groups ["registration"
                        "tier2"
                        "blockedByBug-918303"]
-              :dependsOnMethods ["register_check_syslog"]
-              :priority (int 20)}}
+              :dependsOnMethods ["register_check_syslog"]}}
   unregister_check_syslog
   "Asserts unregister events are logged in the syslog."
   [_]

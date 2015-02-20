@@ -19,8 +19,8 @@
     </packages>
     <groups>
       <run>
-        <include name="registration"/>
         <include name="setup" />
+        <include name="registration"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -33,8 +33,8 @@
     </packages>
     <groups>
       <run>
-        <include name="subscribe"/>
         <include name="setup" />
+        <include name="subscribe"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -48,10 +48,10 @@
     </packages>
     <groups>
       <run>
-        <include name="autosubscribe"/>
         <include name="ComplianceTests" />
         <exclude name="cli.tests" />
         <include name="setup" />
+        <include name="autosubscribe"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -79,8 +79,8 @@
     </packages>
     <groups>
       <run>
-        <include name="proxy"/>
         <include name="setup" />
+        <include name="proxy"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -93,8 +93,8 @@
     </packages>
     <groups>
       <run>
-        <include name="facts"/>
         <include name="setup" />
+        <include name="facts"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -107,8 +107,8 @@
     </packages>
     <groups>
       <run>
-        <include name="interop"/>
         <include name="setup" />
+        <include name="interop"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -121,8 +121,8 @@
     </packages>
     <groups>
       <run>
-        <include name="firstboot"/>
         <include name="setup" />
+        <include name="firstboot"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -135,8 +135,8 @@
     </packages>
     <groups>
       <run>
-        <include name="import"/>
         <include name="setup" />
+        <include name="import"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -149,8 +149,8 @@
     </packages>
     <groups>
       <run>
-        <include name="system"/>
         <include name="setup" />
+        <include name="system"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -163,8 +163,8 @@
     </packages>
     <groups>
       <run>
-        <include name="stacking"/>
         <include name="setup" />
+        <include name="stacking"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -177,8 +177,8 @@
     </packages>
     <groups>
       <run>
-        <include name="repo"/>
         <include name="setup" />
+        <include name="repo"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -191,8 +191,8 @@
     </packages>
     <groups>
       <run>
-        <include name="subscription_status"/>
         <include name="setup" />
+        <include name="subscription_status"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -205,22 +205,50 @@
     </packages>
     <groups>
       <run>
-        <include name="product_status"/>
         <include name="setup" />
+        <include name="product_status"/>
         <include name="cleanup" />
       </run>
     </groups>
   </test>
 
- <test name="GUI: Search Status">
+  <test name="GUI: Search Status">
     <packages>
       <package name="rhsm.gui.tests" />
       <package name="rhsm.base"></package>
     </packages>
     <groups>
       <run>
-        <include name="search_status"/>
         <include name="setup" />
+        <include name="search_status"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Search Status">
+    <packages>
+      <package name="rhsm.gui.tests" />
+      <package name="rhsm.base"></package>
+    </packages>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="search_status"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Firstoot Proxy">
+    <packages>
+      <package name="rhsm.gui.tests" />
+      <package name="rhsm.base"></package>
+    </packages>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="firstboot_proxy"/>
         <include name="cleanup" />
       </run>
     </groups>

@@ -20,8 +20,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -35,8 +35,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -51,10 +51,10 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="ComplianceTests" />
         <exclude name="cli.tests" />
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -68,8 +68,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -83,8 +83,8 @@
     </classes>
     <groups>
       <run>
-	    <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -98,8 +98,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -113,8 +113,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -128,8 +128,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -143,8 +143,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -158,8 +158,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -173,8 +173,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -188,8 +188,8 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>
@@ -203,8 +203,38 @@
     </classes>
     <groups>
       <run>
-        <include name="tier1"/>
         <include name="setup" />
+        <include name="tier1"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Search Status">
+    <classes>
+      <class name="rhsm.base.SubscriptionManagerBaseTestScript"/>
+      <class name="rhsm.gui.tests.search_status_tests" />
+      <class name="rhsm.gui.tests.base" />
+    </classes>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="tier1"/>
+        <include name="cleanup" />
+      </run>
+    </groups>
+  </test>
+
+  <test name="GUI: Firstboot Proxy">
+    <classes>
+      <class name="rhsm.base.SubscriptionManagerBaseTestScript"/>
+      <class name="rhsm.gui.tests.firstboot_proxy_tests" />
+      <class name="rhsm.gui.tests.base" />
+    </classes>
+    <groups>
+      <run>
+        <include name="setup" />
+        <include name="tier1"/>
         <include name="cleanup" />
       </run>
     </groups>

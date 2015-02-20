@@ -61,6 +61,7 @@
       (require :reload-all '[rhsm.gui.tests.rhn_interop_tests :as ritest])
       (require :reload-all '[rhsm.gui.tests.autosubscribe_tests :as atest])
       (require :reload-all '[rhsm.gui.tests.firstboot_tests :as fbtest])
+      (require :reload-all '[rhsm.gui.tests.firstboot_proxy_tests :as fptest])
       (require :reload-all '[rhsm.gui.tests.facts_tests :as ftest])
       (require :reload-all '[rhsm.gui.tests.import_tests :as itest])
       (require :reload-all '[rhsm.gui.tests.system_tests :as systest])

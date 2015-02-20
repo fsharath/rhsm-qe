@@ -19,7 +19,6 @@
             [clojure.tools.logging :as log])
   (:import [org.testng.annotations
             BeforeClass
-            AfterClass
             AfterGroups
             Test
             DataProvider]

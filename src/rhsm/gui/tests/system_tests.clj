@@ -45,7 +45,7 @@
       (reset! (skip-groups :system) true)
       (throw e))))
 
-(defn ^{AfterClass {:groups ["setup"]
+(defn ^{AfterClass {:groups ["cleanup"]
                     :alwaysRun true}}
   restart_env [_]
   (assert-valid-testing-arch)
@@ -329,8 +329,7 @@
                        "tier2"
                        "blockedByBug-1086377"
                        "blockedByBug-916666"]
-              :dependsOnMethods ["rhsmcertd_restart_check_timestamp"]
-              :priority (int 31)}}
+              :dependsOnMethods ["rhsmcertd_restart_check_timestamp"]}}
   rhsmcertd_stop_check_timestamp
   "Checks wheter the timestamp in about dialog is displayed when rhsmcertd is stopped"
   [_]

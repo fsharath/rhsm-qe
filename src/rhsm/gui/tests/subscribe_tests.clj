@@ -70,7 +70,7 @@
                        "acceptance"
                        "tier1"]
               :dataProvider "subscriptions"
-              :priority (int 104)}}
+              :priority (int 100)}}
   subscribe_each
   "Asserts that each subscripton can be subscribed to sucessfully."
   [_ subscription]
@@ -91,7 +91,7 @@
                        "acceptance"
                        "tier1"]
               :dataProvider "subscribed"
-              :priority (int 101)}}
+              :dependsOnMethods ["subscribe_each"]}}
   unsubscribe_each
   "Asserts that each subscripton can be unsubscribed from sucessfully."
   [_ subscription]
@@ -101,6 +101,40 @@
         (sleep 4000)
         (verify (= false (tasks/ui rowexist? :my-subscriptions-view subscription)))
         (catch [:type :not-subscribed] _)))
+
+(defn ^{Test {:groups ["subscribe"
+                       "tier2"
+                       "blockedByBug-918617"]
+              :dependsOnMethods ["unsubscribe_each"]}}
+  subscribe_check_syslog
+  "Asserts that subscribe events are logged in the syslog."
+  [_]
+  (allsearch)
+  (try+
+   (let [subscription (rand-nth (tasks/get-table-elements :all-subscriptions-view 0))
+         output (get-logging @clientcmd
+                             sys-log
+                             "subscribe_check_syslog"
+                             nil
+                             (tasks/subscribe subscription))]
+     (verify (not (blank? output))))
+   (catch [:type :error-getting-subscription] _))
+  (sleep 5000))
+
+(defn ^{Test {:groups ["subscribe"
+                       "tier2"
+                       "blockedByBug-918617"]
+              :dependsOnMethods ["subscribe_check_syslog"]}}
+  unsubscribe_check_syslog
+  "Asserts that unsubscribe events are logged in the syslog."
+  [_]
+  (let [subscription (rand-nth (tasks/get-table-elements :my-subscriptions-view 0))
+        output (get-logging @clientcmd
+                            sys-log
+                            "unsubscribe_check_syslog"
+                            nil
+                            (tasks/unsubscribe subscription))]
+    (verify (not (blank? output)))))
 
 (defn ^{Test {:groups ["subscribe"
                        "tier3"
@@ -258,9 +292,8 @@
                        "tier3"
                        "blockedByBug-755861"
                        "blockedByBug-962905"]
-              :dependsOnMethods ["check_quantity_subscribe"]
               :dataProvider "multi-entitle"
-              :priority (int 501)}}
+              :dependsOnMethods ["check_quantity_subscribe"]}}
   check_quantity_subscribe_traceback
   "Asserts no traceback is shown when subscribing in quantity."
   [_ subscription contract]
@@ -345,57 +378,10 @@
    (finally (if (tasks/ui showing? :contract-selection-table)
               (tasks/ui click :cancel-contract-selection)))))
 
-(defn ^{Test {:groups ["subscribe"
-                       "tier2"
-                       "blockedByBug-918617"]
-              :priority (int 102)}}
-  subscribe_unsubscribe_check_syslog
-  "Asserts that subscribe events are logged in the syslog."
-  [_]
-  (allsearch)
-  (try+
-   (let [subscription (rand-nth (tasks/get-table-elements :all-subscriptions-view 0))
-         output (get-logging @clientcmd
-                             sys-log
-                             "subscribe_check_syslog"
-                             nil
-                             (tasks/subscribe subscription))]
-     (verify (not (blank? output))))
-   (catch [:type :error-getting-subscription] _))
-  (sleep 5000)
-  ;; unsubscribe check syslog
-  (let [subscription (rand-nth (tasks/get-table-elements :my-subscriptions-view 0))
-        output (get-logging @clientcmd
-                                  sys-log
-                                  "unsubscribe_check_syslog"
-                                  nil
-                                  (tasks/unsubscribe subscription))]
-    (verify (not (blank? output)))))
-
-;; included the below test as a part of above test
-;; as they had to be run one after the other
-
-(comment (defn ^{Test {:groups ["subscribe"
-                                "tier2"
-                                "blockedByBug-918617"]
-                       :dependsOnMethods ["subscribe_check_syslog"]
-                       :priority (int 103)}}
-           unsubscribe_check_syslog
-           "Asserts that unsubscribe events are logged in the syslog."
-           [_]
-           (let [subscription (rand-nth (tasks/get-table-elements :my-subscriptions-view 0))
-                 output (get-logging @clientcmd
-                                     sys-log
-                                     "unsubscribe_check_syslog"
-                                     nil
-                                     (tasks/unsubscribe subscription))]
-             (verify (not (blank? output))))))
-
 (defn ^{Test {:group ["subscribe"
                       "tier2"
                       "blockedByBug-951633"]
-              :dependsOnMethods ["subscribe_each"]
-              :priority (int 105)}}
+              :priority (int 300)}}
   product_with_comma_separated_arch
   "This is to assert products with comma seperated products when subscribed are fully subscribed"
   [_]
@@ -413,8 +399,7 @@
                       "tier2"
                       "blockedByBug-950672"
                       "blockedByBug-988411"]
-              :dependsOnMethods ["subscribe_each"]
-              :priority (int 106)}}
+              :dependsOnMethods ["product_with_comma_separated_arch"]}}
   check_subscription_in_subscribed_products
   "Asserts there is a valid subscription value for all Subscribed products"
   [_]
@@ -429,8 +414,7 @@
                       "tier2"
                       "blockedByBug-909467"
                       "blockedByBug-988411"]
-              :dependsOnMethods ["subscribe-each"]
-              :priority (int 107)}}
+              :dependsOnMethods ["check_subscription_in_subscribed_products"]}}
   check_subscription_compliance
   "Checks for status of subscriptions when archs dont match that of the system"
   [_]

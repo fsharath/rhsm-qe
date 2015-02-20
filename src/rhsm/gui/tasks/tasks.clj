@@ -604,9 +604,11 @@
      (if firstboot
        (do
          (if (= "RHEL7" (get-release))
-           (ui click :firstboot-window "proxy_button")
+          (do (verify (fbshowing? :firstboot-window "proxy_button"))
+              (ui click :firstboot-window "proxy_button"))
            (ui click :firstboot-proxy-config))
          (ui waittillwindowexist :firstboot-proxy-dialog 60)
+         (verify (bool (ui guiexist :firstboot-proxy-dialog)))
          (ui check :firstboot-proxy-checkbox)
          (if (= "RHEL5" (get-release))
            (do (settext :firstboot-proxy-location

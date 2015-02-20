@@ -44,7 +44,8 @@
   (verify (not (tasks/ui showing? :register-system))))
 
 (defn ^{Test {:groups ["proxy"
-                       "tier1"]}}
+                       "tier1"]
+              :priority (int 100)}}
   enable_proxy_auth
   "Asserts that the rhsm.conf file is correctly set after setting a proxy with auth."
   [_]
@@ -56,7 +57,8 @@
     (tasks/verify-conf-proxies hostname port username password)))
 
 (defn ^{Test {:groups ["proxy"
-                       "tier1"]}}
+                       "tier1"]
+              :priority (int 101)}}
   enable_proxy_noauth
   "Asserts that the rhsm.conf file is correctly set after setting a proxy without auth."
   [_]
@@ -119,18 +121,25 @@
     (verify (clojure.string/blank? logoutput)))
   (let [logoutput (get-logging @noauth-proxyrunner
                                noauth-log
-                               "disabled-auth-connect"
+                               "disabled-noauth-connect"
                                nil
                                (register))]
     (verify (clojure.string/blank? logoutput))))
 
 (defn test_proxy [expected-message]
   (tasks/ui click :configure-proxy)
-  (if-not (bool (tasks/ui hasstate :test-connection "SENSITIVE"))
-    (try+
-     (let [message (tasks/ui gettextvalue :connection-status)]
-       (verify (= expected-message message)))
-     (finally (tasks/ui click :close-proxy)))))
+  (try
+    (if (bool (tasks/ui hasstate :test-connection "SENSITIVE"))
+      (do
+        (tasks/ui click :test-connection)
+        (sleep 2000)
+        (let [message (tasks/ui gettextvalue :connection-status)]
+          (verify (= expected-message message))))
+      (do
+        (verify (not (some #(= "sensitive" %)
+                           (tasks/ui getallstates :test-connection))))
+        (verify (= "" (tasks/ui gettextvalue :connection-status)))))
+    (finally (tasks/ui click :close-proxy))))
 
 (defn ^{Test {:groups ["proxy"
                        "tier1"]
@@ -138,7 +147,9 @@
   test_auth_proxy
   "Tests the 'test connection' button when using a proxy with auth."
   [_]
-  (test_proxy "Proxy connection succeeded"))
+  (enable_proxy_auth nil)
+  (test_proxy "Proxy connection succeeded")
+  (tasks/disableproxy))
 
 (defn ^{Test {:groups ["proxy"
                        "tier1"]
@@ -146,7 +157,9 @@
   test_noauth_proxy
   "Tests the 'test connection' button when using a proxy without auth."
   [_]
-  (test_proxy "Proxy connection succeeded"))
+  (enable_proxy_noauth nil)
+  (test_proxy "Proxy connection succeeded")
+  (tasks/disableproxy))
 
 (defn ^{Test {:groups ["proxy"
                        "tier1"]
@@ -154,14 +167,12 @@
   test_disabled_proxy
   "Test that the 'test connection' button is disabled when proxy settings are cleared."
   [_]
-  (disable_proxy nil)
-  (tasks/ui click :configure-proxy)
-  (if-not (bool (tasks/ui hasstate :test-connection "SENSITIVE"))
-    (try+
-     (verify (not (some #(= "sensitive" %)
-                        (tasks/ui getallstates :test-connection))))
-     (verify (= "" (tasks/ui gettextvalue :connection-status)))
-     (finally (tasks/ui click :close-proxy)))))
+  (try
+    (disable_proxy nil)
+    (test_proxy "")
+    (finally
+      (if (bool (tasks/ui guiexist :proxy-config-dialog))
+        (tasks/ui click :close-proxy)))))
 
 (defn ^{Test {:groups ["proxy"
                        "tier1"
@@ -170,12 +181,11 @@
   test_proxy_with_blank_proxy
   "Test whether 'Test Connection' returns appropriate message when 'Location Proxy' is empty"
   [_]
-  (disable_proxy nil)
-  (tasks/enableproxy "" :close? false)
-  (tasks/ui click :test-connection)
-  (let [message (tasks/ui gettextvalue :connection-status)]
-    (verify (not (= message proxy-success))))
-  (disable_proxy nil))
+  (try
+    (disable_proxy nil)
+    (tasks/enableproxy "" :close? false)
+    (test_proxy "Proxy connection failed")
+    (finally (tasks/disableproxy))))
 
 (defn ^{Test {:groups ["proxy"
                        "tier1"
@@ -184,12 +194,11 @@
   test_proxy_with_blank_credentials
   "Test whether 'Test Connection' returns appropriate message when User and Password fields are empty"
   [_]
-  (disable_proxy nil)
-  (tasks/enableproxy "" :close? false :auth? true :user "" :pass "")
-  (tasks/ui click :test-connection)
-  (let [message (tasks/ui gettextvalue :connection-status)]
-    (verify (not (= message proxy-success))))
-  (disable_proxy nil))
+  (try
+    (disable_proxy nil)
+    (tasks/enableproxy "" :close? false :auth? true :user "" :pass "")
+    (test_proxy "Proxy connection failed")
+    (finally (tasks/disableproxy))))
 
 (defn ^{Test {:groups ["proxy"
                        "tier1"]}}
@@ -283,7 +292,7 @@
   (tasks/ui guiexist :main-window)
   (disable_proxy nil))
 
-(defn ^{AfterClass {:groups ["setup"]
+(defn ^{AfterClass {:groups ["cleanup"]
                     :alwaysRun true}}
   cleanup [_]
   (skip-if-bz-open "1142918")

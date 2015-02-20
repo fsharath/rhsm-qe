@@ -163,6 +163,12 @@
                                    "'.  (https://bugzilla.redhat.com/show_bug.cgi?id="
                                    ~bugid
                                    ")"))))))
+(defn check-bz-open
+  "This is a helper function to acheck the state of the bug"
+  [bug-id]
+  (let [bz (BzChecker/getInstance)
+        open? (.isBugOpen bz bug-id)]
+    open?))
 
 (defn safe-delete
   "Asserts if the flie/folder is present before a forced delete"

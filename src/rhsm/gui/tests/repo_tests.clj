@@ -21,7 +21,6 @@
              rhsm.gui.tasks.ui)
   (:import [org.testng.annotations
             BeforeClass
-            AfterClass
             BeforeGroups
             AfterGroups
             Test
@@ -84,6 +83,16 @@
       (tasks/checkforerror)
       (verify (bash-bool (tasks/ui guiexist :question-dialog))))))
 
+(defn exception-handler
+  "This is to handle exceptions thrown while checking and unchecking
+   checkbox in repo-dialog"
+  [row-num col-num]
+  (try (tasks/ui checkrow :repo-table row-num col-num)
+       (catch Exception e
+         (if (substring? "Failed to grab focus" (.getMessage e))
+           (sleep 3000)
+           (throw e)))))
+
 (defn select-random-repo
   "This is a helper function to select random repo which does
    does not have both overrides enabled"
@@ -96,11 +105,25 @@
          row-num (nth list-row (rand (count list-row)))
          repo (tasks/ui getcellvalue :repo-table row-num 2)]
      (tasks/ui selectrow :repo-table repo)
-     (sleep 2000)
-     (tasks/ui checkrow :repo-table row-num 1)
-     (sleep 2000)
-     (tasks/ui checkrow :repo-table row-num 0)
-     (sleep 2000)
+     ;;(sleep 2000)
+     (if (check-bz-open "1155954")
+       (do
+         (log/info (str "======= Work Around in select-random-repo
+                         as Bug 1155954 is not resolved"))
+         ;; Work around catches exception and ignores it.
+         ;; Why Workaround ?? At the moment 'checkrow' fails because
+         ;;                   there is a performance issue in the repo
+         ;;                   dialog were the checkbox takes a while
+         ;;                   before it can be accessed/asserted.
+         (exception-handler row-num 0)
+         (exception-handler row-num 1))
+         ;; No work around. If the performance improvement is as expected
+         ;; the sleep command embedded inbetween can be removed.
+       (do
+         (tasks/ui checkrow :repo-table row-num 1)
+         (sleep 2000)
+         (tasks/ui checkrow :repo-table row-num 0)
+         (sleep 2000)))
      (if-not (and (tasks/has-state? :repo-remove-override "sensitive")
                   (tasks/has-state? :repo-remove-override "enabled")
                   (< @counter 10))
@@ -115,7 +138,8 @@
    (reset! counter 0))
 
 (defn ^{Test {:groups ["repo"
-                       "tier1"]}}
+                       "tier1"
+                       "acceptance"]}}
   check_repo_visible
   "This test checks whether repository option exists
    when system is unregistered"
@@ -125,7 +149,8 @@
   (verify (not (tasks/visible? :repositories))))
 
 (defn ^{Test {:groups ["repo"
-                       "tier1"]}}
+                       "tier1"
+                       "acceptance"]}}
   check_repo_system_menu
   "This tests for repository option in the system menu"
   [_]
@@ -139,7 +164,8 @@
       (tasks/ui click :close-repo-dialog))))
 
 (defn ^{Test {:groups ["repo"
-                       "tier1"]}}
+                       "tier1"
+                       "acceptance"]}}
   check_repo_message_unsubscribed
   "This tests for default static message in repository dialog when unsubscribed"
   [_]
@@ -190,9 +216,24 @@
                   (str "Repo without overrides not found"))))
         (tasks/ui selectrowindex :repo-table @random_row_num)
         (verify (not (tasks/has-state? :repo-remove-override "enabled")))
-        (tasks/ui checkrow :repo-table @random_row_num 0)
-        (sleep 2000)
-        (tasks/ui checkrow :repo-table @random_row_num 1)
+        (if (check-bz-open "1155954")
+          (do
+            (log/info (str "======= Work Around in check_repo_remove_override_button
+                            as Bug 1155954 is not resolved"))
+            ;; Work around catches exception and ignores it.
+            ;; Why Workaround ?? At the moment 'checkrow' fails because
+            ;;                   there is a performance issue in the repo
+            ;;                   dialog were the checkbox takes a while
+            ;;                   before it can be accessed/asserted.
+            (exception-handler @random_row_num 0)
+            (exception-handler @random_row_num 1))
+          ;; No work around. If the performance improvement is as expected
+          ;; the sleep command embedded inbetween can be removed.
+          (do
+            (tasks/ui checkrow :repo-table @random_row_num 0)
+            (sleep 1000)
+            (tasks/ui checkrow :repo-table @random_row_num 1)
+            (sleep 1000)))
         (sleep 2000)
         (verify (tasks/has-state? :repo-remove-override "enabled"))
         (assert-and-remove-all-override)
@@ -205,17 +246,36 @@
 (defn toggle-checkbox-state
   "This is a helper function to toggle state of checkbox"
   [row-num]
-  (tasks/ui checkrow :repo-table row-num 1)
-  (sleep 2000)
-  (tasks/ui checkrow :repo-table row-num 0)
-  (sleep 2000)
-  (if-not (and (tasks/has-state? :repo-remove-override "enabled")
-               (tasks/has-state? :repo-remove-override "sensitive"))
+  (if (check-bz-open "1155954")
     (do
-      (tasks/ui uncheckrow :repo-table row-num 0)
-      (sleep 2000)
-      (tasks/ui uncheckrow :repo-table row-num 1)
-      (sleep 2000))))
+      (log/info (str "======= Work Around in toggle-checkbox-state
+                      as Bug 1155954 is not resolved"))
+      ;; Work around catches exception and ignores it.
+      ;; Why Workaround ?? At the moment 'checkrow' fails because
+      ;;                   there is a performance issue in the repo
+      ;;                   dialog were the checkbox takes a while
+      ;;                   before it can be accessed/asserted.
+      (exception-handler row-num 0)
+      (exception-handler row-num 1)
+      (if-not (and (tasks/has-state? :repo-remove-override "enabled")
+               (tasks/has-state? :repo-remove-override "sensitive"))
+        (do
+          (exception-handler row-num 0)
+          (exception-handler row-num 1))))
+    ;; No work around. If the performance improvement is as expected
+    ;; the sleep command embedded inbetween can be removed.
+    (do
+      (tasks/ui checkrow :repo-table row-num 0)
+      (sleep 1000)
+      (tasks/ui checkrow :repo-table row-num 1)
+      (sleep 1000)
+      (if-not (and (tasks/has-state? :repo-remove-override "enabled")
+                   (tasks/has-state? :repo-remove-override "sensitive"))
+        (do
+          (tasks/ui uncheckrow :repo-table row-num 0)
+          (sleep 1000)
+          (tasks/ui uncheckrow :repo-table row-num 1)
+          (sleep 1000))))))
 
 (defn ^{Test {:groups ["repo"
                        "tier3"
@@ -244,7 +304,7 @@
   (tasks/unsubscribe_all))
 
 (comment
-;; Comenting the below test group as iteratively enabling and checking for override
+;; Comenting the below test group because iteratively enabling and checking for override
 ;; persistance had multi-point failure. Since we have stopped testing on GUI, decided
 ;; not to explore more and substitured this iterative test with a simple test
 
@@ -302,8 +362,7 @@
   (tasks/ui click :close-repo-dialog)
   (tasks/unsubscribe_all))
 
-;; Comment ends here
-)
+);; Comment ends here
 
 (defn ^{Test {:groups ["repo"
                        "tier1"
@@ -323,10 +382,24 @@
     ;; overriding random repo
     (tasks/ui selectrowindex :repo-table @random_row_num)
     (sleep 3000)
-    (tasks/ui checkrow :repo-table @random_row_num 1)
-    (sleep 2000)
-    (tasks/ui checkrow :repo-table @random_row_num 0)
-    (sleep 2000)
+    (if (check-bz-open "1155954")
+      (do
+        (log/info (str "======= Work Around in verify_override_persistance
+                      as Bug 1155954 is not resolved"))
+        ;; Work around catches exception and ignores it.
+        ;; Why Workaround ?? At the moment 'checkrow' fails because
+        ;;                   there is a performance issue in the repo
+        ;;                   dialog were the checkbox takes a while
+        ;;                   before it can be accessed/asserted.
+        (exception-handler @random_row_num 0)
+        (exception-handler @random_row_num 1))
+      ;; No work around. If the performance improvement is as expected
+      ;; the sleep command embedded inbetween can be removed.
+      (do
+        (tasks/ui checkrow :repo-table @random_row_num 1)
+        (sleep 2000)
+        (tasks/ui checkrow :repo-table @random_row_num 0)
+        (sleep 2000)))
     (tasks/ui click :close-repo-dialog)
     (tasks/unsubscribe_all)
     ;; verifying persistnace of override

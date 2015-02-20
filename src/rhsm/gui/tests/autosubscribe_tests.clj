@@ -182,8 +182,7 @@
                        "tier1"
                        "configureProductCertDirForAllProductsSubscribableByOneCommonServiceLevel"
                        "blockedByBug-921245"]
-              :dependsOnMethods ["simple_autosubscribe"]
-              :priority (int 101)}}
+              :dependsOnMethods ["simple_autosubscribe"]}}
   assert_service_level
   "Asserts that the service level was set system wide after simple autosubscribe."
   [_]
@@ -214,8 +213,7 @@
 (defn ^{Test {:groups ["autosubscribe"
                        "tier1"
                        "configureProductCertDirForAllProductsSubscribableByOneCommonServiceLevel"]
-              :dependsOnMethods ["simple_autosubscribe"]
-              :priority (int 102)}}
+              :dependsOnMethods ["simple_autosubscribe"]}}
   assert_msg_after_auto_attach
   "Asserts the message displayed when auto-attach is clicked after simple autosubscribe."
   [_]

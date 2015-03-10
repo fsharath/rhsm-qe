@@ -193,7 +193,8 @@
               usedmax (tasks/ui getcellvalue :contract-selection-table row 2)
               default (first (split (tasks/ui getcellvalue :contract-selection-table row 5) #"\s"))
               used (first (split usedmax #" / "))
-              max (last (split usedmax #" / "))
+              unused (last (split usedmax #" / "))
+              max (if (= "Unlimited" unused) (rand-int 50) unused)
               available (- (Integer. max) (Integer. used))
               enter-quantity (fn [num]
                                (tasks/ui generatekeyevent
@@ -330,8 +331,12 @@
   [_ subscription]
   (tasks/ui selecttab :all-available-subscriptions)
   (let [row (tasks/skip-dropdown :all-subscriptions-view subscription)
+        overall-stat (fn [a] (get a :overall))
+        vector-map (vec (get @contractlist subscription))
+        cli-stat (some #(if-not (nil? %) %) (map overall-stat vector-map))
         overall-type (tasks/ui getcellvalue :all-subscriptions-view row 1)]
-    (verify (= overall-type (:overall (get @contractlist subscription)))))
+    ;(verify (= overall-type (:overall (get @contractlist subscription))))
+    (verify (= overall-type cli-stat)))
   (try+
    ;; The below condition is to avoid gui-freeze in RHEL7 when generate
    ;; keyevent attemps to update quanity when quantiy is 0
@@ -346,12 +351,21 @@
         0
         (fn [contract]
           (verify (not-nil? (some #{contract}
-                                  (keys (get @contractlist subscription)))))
-          (verify (= (tasks/ui getcellvalue :contract-selection-table
-                               (tasks/ui gettablerowindex :contract-selection-table contract)
-                               1)
-                     (get (get @contractlist subscription) contract)))))))
-    (catch [:type :contract-selection-not-available] _)
+                                  ;(keys (get @contractlist subscription))
+                                  (flatten (map #(map key %)
+                                                (vec (get @contractlist subscription)))))))
+          ;; old verification
+          (comment
+            (verify (= (tasks/ui getcellvalue :contract-selection-table
+                                 (tasks/ui gettablerowindex :contract-selection-table contract)1)
+                       (get (get @contractlist subscription) contract))))
+
+          (verify (not-nil? (some #{(tasks/ui getcellvalue :contract-selection-table
+                                              (tasks/ui gettablerowindex
+                                                        :contract-selection-table contract)1)}
+                                  (flatten (map #(get % contract)
+                                                (vec (get @contractlist subscription)))))))))))
+   (catch [:type :contract-selection-not-available] _)
     (catch [:type :error-getting-subscription] _)
     (finally (if (tasks/ui showing? :contract-selection-table)
                (tasks/ui click :cancel-contract-selection)))))
@@ -373,7 +387,7 @@
          total (last (split (tasks/ui getcellvalue :contract-selection-table row 2) #" / "))
          quantity (first (split (tasks/ui getcellvalue :contract-selection-table row 5) #" "))]
      (verify (= "Unlimited" total))
-     (verify (= "Unlimited" quantity)))
+     (verify (<= 0 (Integer. quantity))))
    (catch [:type :contract-selection-not-available] _)
    (finally (if (tasks/ui showing? :contract-selection-table)
               (tasks/ui click :cancel-contract-selection)))))
@@ -493,7 +507,7 @@
                        "blockedByBug-874624"]
               :dataProvider "subscriptions"}}
   check_contract_number
-  "Checks if every subscipion has contract numbers displayed"
+  "Checks if every subsciption has contract numbers displayed"
   [_ subscription]
   (try+
     (allsearch)

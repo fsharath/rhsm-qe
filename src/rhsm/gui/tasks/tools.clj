@@ -163,7 +163,7 @@
                                    "'.  (https://bugzilla.redhat.com/show_bug.cgi?id="
                                    ~bugid
                                    ")"))))))
-(defn check-bz-open
+(defn check-bz-open?
   "This is a helper function to acheck the state of the bug"
   [bug-id]
   (let [bz (BzChecker/getInstance)

@@ -83,7 +83,7 @@
       (tasks/checkforerror)
       (verify (bash-bool (tasks/ui guiexist :question-dialog))))))
 
-(defn exception-handler
+(defn- exception-handler
   "This is to handle exceptions thrown while checking and unchecking
    checkbox in repo-dialog"
   [row-num col-num & {:keys [uncheck]
@@ -110,7 +110,7 @@
          repo (tasks/ui getcellvalue :repo-table row-num 2)]
      (tasks/ui selectrow :repo-table repo)
      ;;(sleep 2000)
-     (if (check-bz-open "1155954")
+     (if (check-bz-open? "1155954")
        (do
          (log/info (str "======= Work Around in select-random-repo
                          as Bug 1155954 is not resolved"))
@@ -220,7 +220,7 @@
                   (str "Repo without overrides not found"))))
         (tasks/ui selectrowindex :repo-table @random_row_num)
         (verify (not (tasks/has-state? :repo-remove-override "enabled")))
-        (if (check-bz-open "1155954")
+        (if (check-bz-open? "1155954")
           (do
             (log/info (str "======= Work Around in check_repo_remove_override_button
                             as Bug 1155954 is not resolved"))
@@ -250,7 +250,7 @@
 (defn toggle-checkbox-state
   "This is a helper function to toggle state of checkbox"
   [row-num]
-  (if (check-bz-open "1155954")
+  (if (check-bz-open? "1155954")
     (do
       (log/info (str "======= Work Around in toggle-checkbox-state
                       as Bug 1155954 is not resolved"))
@@ -386,7 +386,7 @@
     ;; overriding random repo
     (tasks/ui selectrowindex :repo-table @random_row_num)
     (sleep 3000)
-    (if (check-bz-open "1155954")
+    (if (check-bz-open? "1155954")
       (do
         (log/info (str "======= Work Around in verify_override_persistance
                       as Bug 1155954 is not resolved"))

@@ -172,14 +172,22 @@
                                  (is-true-value? (:value %)))
                            p))
         virt-type (fn [p] (if (virt-pool? p) "Virtual" "Physical"))
-        itemize (fn [p] (list (:productName p) {(:contractNumber p) (virt-type (:productAttributes p))}))
+        itemize (fn [p] (list (:productName p) {(:contractNumber p) (virt-type (:attributes p))}))
         x (map itemize (if all? (list-available true) (list-available false)))
         y (group-by first x)
         overall-status (fn [m] (cond
-                               (every? #(= "Physical" %) (vals m)) (merge m {:overall "Physical"})
-                               (every? #(= "Virtual" %) (vals m)) (merge m {:overall "Virtual"})
-                               :else (merge m {:overall "Both"})))]
-    (zipmap (keys y) (map #(overall-status (reduce merge (map second %))) (vals y)))))
+                                (every? #(= "Physical" %) (flatten (map vals m)))
+                                (merge m {:overall "Physical"})
+                                (every? #(= "Virtual" %) (flatten (map vals m)))
+                                (merge m {:overall "Virtual"})
+                               :else (merge m {:overall "Both"})))
+        extractor (fn [c] (map last (last c)))
+        map-vals (map extractor y)
+        map-keys (map first y)
+        ;reduced-map (map overall-status muhvals)
+        z (zipmap map-keys (map overall-status map-vals))]
+       ;(zipmap (keys y) (map #(overall-status (reduce merge (map second %))) (vals y)))
+       z))
 
 (defn get-owners
   "Given a username and password, this function returns a list
